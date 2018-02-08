@@ -1,4 +1,4 @@
-Month	Rainfall	Rainfall_density	Year	Relative_air_humidity
+Month	Rainfall	Rdens	Year	RH
 Mar	33.9	0.23	2015	62.5733257143
 Apr	193.8	0.27	2015	66.0758066667
 May	111.3	0.21	2015	72.026826129

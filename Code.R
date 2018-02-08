@@ -1,4 +1,4 @@
-setwd("~/Desktop/Projet_M2/Documents/Papers/Code and Data")
+setwd("~/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Code and Data")
 library(nlme)
 library(multcomp)
 library(MuMIn)
@@ -14,7 +14,8 @@ library(grid)
 Field_data = read.csv("Field_Data.csv", sep = '\t')
 Plot1m2_data = read.csv('Plot1m2_Data.csv', sep = '\t')
 Plot1m2_community = read.csv('Plot1m2_Community.csv', sep = '\t')
-
+Plot1m2_data$LU = factor(Plot1m2_data$LU, c('ULR', 'M', 'YRM', 'OR'))
+Plot1m2_community$LU = factor(Plot1m2_community$LU, c('ULR', 'M', 'YRM', 'OR'))
 ## Topographical data
 Slope_per_field = tapply(Plot1m2_data$Slope, Plot1m2_data$Plot, mean) ### check
 
@@ -203,8 +204,8 @@ Lit$BP = Lit$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
 plot(Lit$BP)
 dev.off()
 
-Fr= lm.BP(Plot1m2_data, 'Fresh', 'LU', 'Field', colors = cbbPalette, ymax = 300,expression(paste("Fresh biomass (g/", m^{2}, ")")), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/Fr_crop.pdf", width = 7.5, height = 5)
+Fr= lm.BP(Plot1m2_data, 'Fresh', 'LU', 'Field', colors = cbbPalette, ymax = 300,expression(paste("Living biomass (g/", m^{2}, ")")), 'TRUE', lambda = 0.3)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/Fr_crop.pdf", width = 7.5, height = 5)
 
 Fr$BP = Fr$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -259,17 +260,21 @@ dev.off()
 #### Figure 5 ####
 BCA_data$CS1 = -BCA_data$CS1
 BCA_data$CS2 = -BCA_data$CS2
+BCA_data$LU = factor(BCA_data$LU, levels = c('ULR', 'M', 'YRM','OR'))
 
 ggbca = ggplot(BCA_data, aes(CS1, CS2, shape = LU, linetype = LU)) +  
-  scale_shape_manual(name="Land use", values = c(21,22,13,24), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
-  scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
+  scale_shape_manual(name="Land use", values = c(1,2,19,17), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
+  scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT')) +
   scale_fill_manual(values=cbbPalette) +
   geom_point(aes(x=CS1, y=CS2)) +
-  stat_ellipse(level=0.95)+#, color = couleurs[as.character(Dat$Crop)]) +
-  #annotate("text", x=bca_sp$li[,1], y=bca_sp$li[,2]+c(0.3,-0.2,0.2,0), label=c("ULR", "M", "YRT", "ORT"), cex = 5) +
+  stat_ellipse(level=0.95)+
   theme(#legend.position="none", 
     panel.background=element_blank(),panel.border=element_blank(),
-    plot.background=element_blank()) + xlab('CS1 (7.9%)') + ylab('CS2 (7.1%)') 
+    plot.background=element_blank()) +
+  xlab('CS1 (7.9%)') + ylab('CS2 (7.1%)') 
+
+save_plot('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/BCA_leg2.pdf',ggbca, base_aspect_ratio = 1.85 )
+
 
 bca_pairtest = cbind(-BCA$ls[,1:3],Plot1m2_community$LU)
 colnames(bca_pairtest)[4] = 'LU'
@@ -278,14 +283,14 @@ mod2 = lm(CS2~LU, data = bca_pairtest)
 #cld(lsmeans(mod1, 'Crop'))
 cs1_means <- ddply(bca_pairtest, "LU", summarise, cs1.mean=mean(CS1))
 cs1 = cs1_means[cs1_means$LU %in% c('ULR', 'M', 'OR'),'cs1.mean']#+ c(0, -0.1,0)
-cs1
+
 cs2_means <- ddply(bca_pairtest, "LU", summarise, cs2.mean=mean(CS2))
 cs2 = cs2_means[cs2_means$LU %in% c('ULR', 'M', 'OR'),'cs2.mean']#+ c(0, -0.1,0)
 cs2_means
 
 plot.cs1 = ggplot(bca_pairtest, aes(x=CS1,  linetype = LU)) + geom_density(alpha = 0.1) +
   geom_segment(data=cs1_means, aes(x=cs1.mean, y=0, xend=cs1.mean, yend=0.75), linetype = 'solid')+
-  geom_segment(data=cs1_means, aes(x=cs1.mean[3]-0.06, y=0.8, xend=cs1.mean[4]+0.06, yend=0.8), color = 'black' ,linetype = 'solid', alpha=0.95)+
+  #geom_segment(data=cs1_means, aes(x=cs1.mean[3]-0.06, y=0.8, xend=cs1.mean[4]+0.06, yend=0.8), color = 'black' ,linetype = 'solid', alpha=0.95)+
   annotate('text',label = c('a', 'b'), x = c(-2.7,1), y = 1, cex = 7)+ ylab('Density (CS1)') +
   ylim(c(0, 1.1))+
   scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT')) +
@@ -298,11 +303,13 @@ plot.cs1 = ggplot(bca_pairtest, aes(x=CS1,  linetype = LU)) + geom_density(alpha
 
 plot.cs2 = ggplot(bca_pairtest, aes(x=CS2, linetype=LU)) + geom_density(alpha = 0.1) +
   ylim(c(0, 1.1))+
-  geom_segment(data=cs2_means, aes(x=cs2.mean, y=0, xend=cs2.mean, yend=0.75), linetype = 'solid', )+
-  geom_segment(data=cs2_means, aes(x=cs2.mean[1]+0.06, y=0.8, xend=cs2.mean[2]-0.06, yend=0.8,linetype = 'solid')
-               , color = 'black', alpha=0.95) +
-  geom_segment(data=cs2_means, aes(x=cs2.mean[2]+0.06, y=0.8, xend=cs2.mean[3]-0.06, yend=0.8,linetype = 'solid')
-               , color = 'black', alpha=0.95) +
+  scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT')) +
+  
+  geom_segment(data=cs2_means, aes(x=cs2.mean, y=0, xend=cs2.mean, yend=0.75), linetype = 'solid')+
+#  geom_segment(data=cs2_means, aes(x=cs2.mean[1]+0.06, y=0.8, xend=cs2.mean[2]-0.06, yend=0.8,linetype = 'solid')
+#             , color = 'black', alpha=0.95) +
+ # geom_segment(data=cs2_means, aes(x=cs2.mean[2]+0.06, y=0.8, xend=cs2.mean[3]-0.06, yend=0.8,linetype = 'solid')
+   #            , color = 'black', alpha=0.95) +
   theme(axis.text.y=element_blank(),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
@@ -316,7 +323,7 @@ a = ggdraw() +
   draw_plot(plot.cs1 , 0.05, 0.75,  .70, .25) +
   draw_plot(plot.cs2, .75,   0.05,  .25, .70)
 a
-save_plot('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/BCA_plot.pdf',a, base_aspect_ratio = 1.85 )
+save_plot('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/BCA_plot.pdf',a, base_aspect_ratio = 1.85 )
 
 
 
@@ -379,8 +386,9 @@ trend_plot = function(data, Y, X, Crop_to_draw, LP, xtext, ytext, angl){
     scale_color_manual(name="Land use", values=c('black', 'black', 'black', 'black'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) + 
     scale_fill_manual(name="Land use", values=c('black', 'black', 'black', 'black'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
     #scale_linetype_manual(name="Land use", values=LP, breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
-    scale_shape_manual(name="Land use", values = c(21,22,13,24), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE) +
-    geom_point(size = 0.65, aes(shape = LU), alpha = 0.5)  
+    geom_point(size = 0.65, aes(shape = LU), alpha = 0.8) +
+    scale_shape_manual(name="Land use", values = c(1,2,19,17), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT'), guide = FALSE)
+    
   Crop_to_write = recode(Crop_to_draw,"'ULR'='Rice';'M'='Maize';'OR'='Mature RT';'YR'='Young RT'")
   
   if (!is.na(Crop_to_draw)){
@@ -391,7 +399,6 @@ trend_plot = function(data, Y, X, Crop_to_draw, LP, xtext, ytext, angl){
     }}
   return(gg)
 }
-
 hum_li = trend_plot(Plot1m2_data[!is.na(Plot1m2_data$Living_cover),], 'Humidity', 'Living_cover', c('OR', 'ULR'), c('dashed', 'solid'),  c(40, 64),c(17,10), c(0,22))
 hum_ric = trend_plot(Plot1m2_data, 'Humidity', 'Richness', c('M', 'OR'), c('dashed', 'solid'),  c(9, 6),c(5.8,15.8), c(0,-10))
 hum_lit = trend_plot(Plot1m2_data, 'Humidity', 'Litter', c('OR'), c( 'solid'),  c(500),c(18), c(12))
@@ -428,18 +435,82 @@ tot_plot = ggdraw() +
   draw_plot(c_lit, 0.3, 0.1, 0.2, .2) +
   draw_plot(c_fr, 0.5, 0.1, 0.2, .2) +
   draw_plot(c_li, 0.7, 0.1, 0.2, .2) +
-  annotate('text', label = c('C content (%)','N content (%)','Humidity (%)', 'Bulk density (g/cm^3)',  
-                             'Species richness', 'Litter biomass (g/m^2)', 'Living biomass (g/m^2)', 'Living soil cover (%)'),
+  annotate('text', label = c('C content (%)','N content (%)','Humidity (%)', 'Bulk density (g.cm  )',  
+                             'Species richness', 'Litter biomass (g.m  )', "Living biomass (g.m  ", 'Living soil cover (%)'),
            x = c(0.1,0.1,0.1,0.1,0.22,0.42,0.62,0.82), y = c(0.22,0.42,0.62,0.82, 0.1,0.1,0.1,0.1),
-           angle = c(90,90,90,90, 0,0,0,0), cex = 5) +
+           angle = c(90,90,90,90, 0,0,0,0), cex = 5)  +
   draw_plot_label(letters[1:16], x= 0.02+ rep(c(0.1, 0.3, 0.5, 0.7), 4), y= 1.02- rep(c(0.1, 0.3, 0.5, 0.7), each= 4), size = 15)
-pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/tot_plot.pdf', height = 10, width = 10)
+pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/tot_plot.pdf', height = 10, width = 10)
 plot(tot_plot)
 dev.off()
 
+"*'Living biomass (g.'*m^{2}*')'*"
+Living biomass (g.m^-2)
 
 
 
 
+##### Fig S1 #####
+
+meteo = read.table('monthly_meteo2015-2016.csv', sep = '\t', head = TRUE)
+meteo$month = 1:22
+meteo$Season = c('Dry season', rep('Rainy season', 8), rep('Dry season',4), rep('sainy Season',8), 'Dry season')
+
+rf = ggplot(meteo, aes(y = Rainfall, x = month))  + theme_bw()+
+  #  color = c(rep('black', 12), 'red', rep('black', 9)))+
+  labs(x = "", y = 'Rainfall (mm)') +
+  #scale_fill_manual(labels = c('Dry season', 'Rainy season'), values = c('gray50', 'gray10'))+
+  # color = c(rep('black', 12), 'red', rep('black', 9)))+
+  scale_x_continuous(breaks = meteo$month[seq(1,22, 2)] , labels = meteo$X[seq(1,22, 2)]) +
+  annotate("rect", xmin = 2, xmax = 9, ymin = -5, ymax = 420,  alpha = .8,fill = 'gray90') +
+  annotate("rect", xmin = 14, xmax = 21, ymin = -5, ymax = 420,  alpha = .8,fill = 'gray90') +
+  geom_vline(aes(xintercept=meteo$month),linetype="dotted", 
+             size = c(rep(0.3, 12), 1, rep(0.3, 9)))+ 
+  geom_bar(stat="identity") +
+  annotate("rect", xmin = 4, xmax = 8, ymin = -35, ymax = -5, alpha = 1,fill = 'white') +
+  annotate("rect", xmin = 16, xmax = 20, ymin = -35, ymax = -5, alpha = 1,fill = 'white') #+
+  #annotate("text", x = c(6,18),y = c(-25, -25),  label = c('2015', '2016'))
 
 
+
+rh = ggplot(meteo, aes(y = RH, x = month)) +  
+  annotate("rect", xmin = 2, xmax = 9, ymin = 25, ymax = 100,  alpha = .8, fill = 'gray90') +
+  annotate("rect", xmin = 14, xmax = 21, ymin = 25, ymax = 100,  alpha = .8,fill = 'gray90') +
+  geom_line() +
+  geom_vline(aes(xintercept=meteo$month),linetype="dotted", 
+             size = c(rep(0.3, 12), 1, rep(0.3, 9))) +
+  scale_x_continuous(breaks = meteo$month[seq(1,22, 2)] , labels = meteo$X[seq(1,22, 2)])  +
+  labs(x = "", y = 'Relative air humidity (%)') + theme_bw()  
+
+rh
+
+rdens = ggplot(meteo, aes(y = Rdens, x = month))  +
+  annotate("rect", xmin = 2, xmax = 9, ymin = 0, ymax = 0.4,  alpha = .8,fill = 'gray90') +
+  annotate("rect", xmin = 14, xmax = 21, ymin = 0, ymax = 0.4, alpha = .8,fill = 'gray90') +
+  geom_vline(aes(xintercept=meteo$month),linetype="dotted", 
+             size = c(rep(0.3, 12), 1, rep(0.3, 9)))+
+  scale_x_continuous(breaks = meteo$month[seq(1,22, 2)] , labels = meteo$X[seq(1,22, 2)])  +
+  labs(x = "", y = 'Rainfall erosivity') + theme_bw() +
+  geom_bar(stat="identity") 
+
+library(ggplot2)
+library(grid)
+library(gridExtra)
+
+pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/meteo.pdf', width = 9, height = )
+grid.arrange(rf, rh, rdens, ncol = 1)
+dev.off()
+
+##### Fig S2 #####
+
+colnames(Plot1m2_community)
+names_spe = names(sort(colSums(Plot1m2_community[,1:44]), decreasing = TRUE))[1:9]
+names_spe = names_spe[names_spe !=  "Not_identified"]
+Field_com = aggregate(Plot1m2_community[,names_spe ], list(Plot1m2_community$Field), mean )
+Field_com$LU = factor(rep(c('M', 'OR', 'ULR', 'YR'), each = 5), levels = c('ULR', 'M', 'YR', 'OR'))
+levels(Field_com$LU) <- c("Upland rice", "Maize", "Young RT + Maize", 'Mature RT')
+Field_com_melt = melt(Field_com, id.vars = c('Group.1', 'LU'))
+ggplot(Field_com_melt, aes(x = variable, y = value+1)) + geom_boxplot()+theme_bw()+
+#  geom_jitter(position=position_dodge(0.6)) +
+  facet_wrap(~LU, ncol = 2) + scale_y_log10() + xlab('Species') +
+  ylab(bquote(Plants~per~m^2))+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
