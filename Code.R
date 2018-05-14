@@ -1,4 +1,3 @@
-setwd("~/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Code and Data")
 library(nlme)
 library(multcomp)
 library(MuMIn)
