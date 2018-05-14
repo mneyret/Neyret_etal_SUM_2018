@@ -56,7 +56,7 @@ mod = lme(Living_cover~Abundance, data = Plot1m2_data, random = ~1|Field, na.act
 r.squaredGLMM(mod)
 
 ## Between Class Analysis
-Community =  Plot1m2_community[, tolower(colnames(Plot1m2_community)) %in% list_herb]
+Community =  Plot1m2_community[, tolower(colnames(Plot1m2_community)) %in% tolower(list_herb)]
 
 Community_hellinger = decostand(Community, 'hellinger')
 PCA = dudi.pca(Community_hellinger, scannf = FALSE, nf = 4)
@@ -187,16 +187,16 @@ lm.BP = function(DATA, var, fact, rand = '', colors = couleurs, ymax, YLAB = '',
 cbbPalette = c('gray', 'gray','gray', 'gray' )
 names(cbbPalette) = c("ULR", "M", "YRM", 'OR')
 
-ric = lm.BP(Plot1m2_data, 'Richness', 'LU', 'Field', colors = cbbPalette, ymax = 15,expression(paste("Number of species / ", m^{2})), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/richness_crop.pdf", width = 7.5, height = 5)
+ric = lm.BP(Plot1m2_data, 'Richness', 'LU', 'Field', colors = cbbPalette, ymax = 15,expression(bold(paste("Number of species / ", m^{2}))), 'TRUE', lambda = 0.3)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/richness_crop.pdf", width = 7.5, height = 5)
 ric$BP = ric$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14)) + xlab('Land use')
 plot(ric$BP)
 dev.off()
 
-Lit = lm.BP(Plot1m2_data, 'Litter', 'LU', 'Field', colors = cbbPalette, ymax = 920,expression(paste("Litter biomass (g/", m^{2}, ")")), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/Lit_crop.pdf", width = 7.5, height = 5)
+Lit = lm.BP(Plot1m2_data, 'Litter', 'LU', 'Field', colors = cbbPalette, ymax = 920,expression(bold(paste("Litter biomass (g/", m^{2}, ")"))), 'TRUE', lambda = 0.3)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/Lit_crop.pdf", width = 7.5, height = 5)
 
 Lit$BP = Lit$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -204,7 +204,7 @@ Lit$BP = Lit$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
 plot(Lit$BP)
 dev.off()
 
-Fr= lm.BP(Plot1m2_data, 'Fresh', 'LU', 'Field', colors = cbbPalette, ymax = 300,expression(paste("Living biomass (g/", m^{2}, ")")), 'TRUE', lambda = 0.3)
+Fr= lm.BP(Plot1m2_data, 'Fresh', 'LU', 'Field', colors = cbbPalette, ymax = 300,expression(bold(paste("Living biomass (g/", m^{2}, ")"))), 'TRUE', lambda = 0.3)
 pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/Fr_crop.pdf", width = 7.5, height = 5)
 
 Fr$BP = Fr$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
@@ -213,8 +213,8 @@ Fr$BP = Fr$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
 plot(Fr$BP)
 dev.off()
 
-li= lm.BP(Plot1m2_data[!is.na(Plot1m2_data$Living_cover),], 'Living_cover', 'LU', 'Field', colors = cbbPalette, ymax = 80,'Living soil cover (%)', 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/li_crop.pdf", width = 7.5, height = 5)
+li= lm.BP(Plot1m2_data[!is.na(Plot1m2_data$Living_cover),], 'Living_cover', 'LU', 'Field', colors = cbbPalette, ymax = 80,expression(bold(paste('Living soil cover (%)'))), 'TRUE', lambda = 0.25)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/li_crop.pdf", width = 7.5, height = 5)
 li$BP = li$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14))+ xlab('Land use')
@@ -222,8 +222,9 @@ plot(li$BP)
 dev.off()
 
 
-hum= lm.BP(Plot1m2_data, 'Humidity', 'LU', 'Field', colors = cbbPalette, ymax = 30,'Soil moisture (%)', 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/hum_crop.pdf", width = 7.5, height = 5)
+
+hum= lm.BP(Plot1m2_data, 'Humidity', 'LU', 'Field', colors = cbbPalette, ymax = 30,'Soil water content (%)', 'TRUE', lambda = 0.25)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/hum_crop.pdf", width = 7.5, height = 5)
 
 hum$BP = hum$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -232,8 +233,8 @@ plot(hum$BP)
 dev.off()
 
 
-bd= lm.BP(Plot1m2_data, 'Bulk_density', 'LU', 'Field', colors = cbbPalette, ymax = 1.5,expression(paste("Litter biomass (g/", cm^{3}, ")")), 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/bd_crop.pdf", width = 7.5, height = 5)
+bd= lm.BP(Plot1m2_data, 'Bulk_density', 'LU', 'Field', colors = cbbPalette, ymax = 1.5,expression(bold(paste("Bulk density (g/", cm^{3}, ")"))), 'TRUE', lambda = 0.25)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/bd_crop.pdf", width = 7.5, height = 5)
 
 bd$BP = bd$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -242,14 +243,14 @@ plot(bd$BP)
 dev.off()
 
 c= lm.BP(Plot1m2_data, 'C', 'LU', 'Field', colors = cbbPalette, ymax = 5,'Carbon content (%)', 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/c_crop.pdf", width = 7.5, height = 5)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/c_crop.pdf", width = 7.5, height = 5)
 c$BP = c$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14))+ xlab('Land use')
 plot(c$BP)
 dev.off()
 
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/n_crop.pdf", width = 7.5, height = 5)
+pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/n_crop.pdf", width = 7.5, height = 5)
 n= lm.BP(Plot1m2_data, 'N', 'LU', 'Field', colors = cbbPalette, ymax = 0.5,'Nitrogen content (%)', 'TRUE', lambda = 0.25)
 n$BP = n$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -288,12 +289,14 @@ cs2_means <- ddply(bca_pairtest, "LU", summarise, cs2.mean=mean(CS2))
 cs2 = cs2_means[cs2_means$LU %in% c('ULR', 'M', 'OR'),'cs2.mean']#+ c(0, -0.1,0)
 cs2_means
 
-plot.cs1 = ggplot(bca_pairtest, aes(x=CS1,  linetype = LU)) + geom_density(alpha = 0.1) +
-  geom_segment(data=cs1_means, aes(x=cs1.mean, y=0, xend=cs1.mean, yend=0.75), linetype = 'solid')+
-  #geom_segment(data=cs1_means, aes(x=cs1.mean[3]-0.06, y=0.8, xend=cs1.mean[4]+0.06, yend=0.8), color = 'black' ,linetype = 'solid', alpha=0.95)+
-  annotate('text',label = c('a', 'b'), x = c(-2.7,1), y = 1, cex = 7)+ ylab('Density (CS1)') +
-  ylim(c(0, 1.1))+
-  scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT')) +
+#plot.cs1 =
+ggplot(bca_pairtest, aes(x=CS1,  linetype = LU)) + geom_density(alpha = 0.1) +
+  #geom_segment(data=cs1_means, aes(x=cs1.mean, y=0, xend=cs1.mean, yend=0.75), linetype = 'solid')+
+#  geom_histogram(aes(x=CS1, fill = LU))+
+ # geom_segment(data=cs1_means, aes(x=cs1.mean[3]-0.06, y=0.8, xend=cs1.mean[4]+0.06, yend=0.8), color = 'black' ,linetype = 'solid', alpha=0.95)+
+#  annotate('text',label = c('a', 'b'), x = c(-2.7,1), y = 1, cex = 7)+ ylab('Density (CS1)') +
+#  ylim(c(0, 1.1))+
+#  scale_linetype_manual(name="Land use", values = c("solid",'dashed','dotted','twodash'), breaks=c("ULR", "M", "YRM", 'OR'), labels = c("Rice", "Maize", "Young RT + Maize", 'Mature RT')) +
   theme(axis.text.x=element_blank(),
         axis.title.y=element_blank(),
         axis.title.x=element_blank(),legend.position="none",
@@ -347,30 +350,32 @@ l_seg = sqrt(XLAB^2 + YLAB^2) + 0.05
 XLAB_prim = XLAB/l_seg 
 YLAB_prim = YLAB/l_seg        
 
-XLAB_lab =  XLAB_prim    + c(0,      -0.0,       -0.21,     0.0,     0,
+XLAB_lab =  XLAB_prim   # + c(0,      -0.0,       -0.21,     0.0,     0,
                             -0,       0.1 ,       0.15,      +0.1,     0.23,
                             0.15,     -0.02,       -0.13,     0.1,         0, 
                             -0.12,    0.0,       -0.1,    - 0.12)
-YLAB_lab =  YLAB_prim   + c(0,      - 0.05,       0.13,      -0.05,   -0.1,
+YLAB_lab =  YLAB_prim  # + c(0,      - 0.05,       0.13,      -0.05,   -0.1,
                           -0,        -0.04 ,      0.12,      0.02,    0.12, 
                           -0.1,      -0.1,       0.21,     0.02,        0,    
                           0.15,     -0.03,    0.1,     0.1)
 circle <- circleFun(c(0,0),2,npoints = 100)
 
-       # ggcircle =
-          ggplot(BCA$co[tot_names,], aes(x=-Comp1, y=-Comp2)) +
+      #  ggcircle =
+          ggplot(BCA$co[tot_names,], aes(x=Comp1, y=-Comp2)) +
   #annotation_custom(grob=circleGrob(r=unit(1,"npc")), xmin=-1, xmax=1, ymin=-1, ymax=1) +
-  geom_segment(data=BCA$co[tot_names,], aes(x=0, y=0, xend=-Comp1, yend=-Comp2),
+  geom_segment(data=BCA$co[tot_names,], aes(x=0, y=0, xend=Comp1, yend=-Comp2),
                colour = 'black', arrow=arrow(length=unit(0.2,"cm")), alpha=1)+
-  geom_segment(data=BCA$co[tot_names,], aes(x=0, y=0, xend=-XLAB_prim, yend=-YLAB_prim),
+  geom_segment(data=BCA$co[tot_names,], aes(x=0, y=0, xend=XLAB_prim, yend=-YLAB_prim),
                colour = 'black', alpha=0.25)+
   ylim(c(-1,1)) + xlim(c(-1,1)) + theme_bw() +
-  theme(panel.border = element_blank(),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),axis.text=element_text(size=16),
+  theme(panel.border = element_blank(),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text=element_text(size=16),
         axis.title=element_text(size=18)) +
-  annotate('text', label = rownames(BCA$co[tot_names,]), x = -XLAB_lab,y = -YLAB_lab, cex = 7)+
-  geom_path(data = circle, aes(x=x,y=y), color = 'lightgray') + xlab('CS1 (7.8%)') + ylab('CS2 (6.9%)') 
+  annotate('text', label = rownames(BCA$co[tot_names,]), x = XLAB_lab,y = -YLAB_lab, cex = 7)+
+  geom_path(data = circle, aes(x=x,y=y), color = 'lightgray') + xlab('CS1 (7.8%)') + ylab('CS2 (6.9%)') +
+            xlim(c(-1.5,1)) + ylim(c(-1, 1.5))
 
-pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Figures/circle.pdf', width = 8, height = 8)
+pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/circle.pdf', width = 4, height = 4)
 plot(ggcircle)
 dev.off()
 
@@ -435,17 +440,15 @@ tot_plot = ggdraw() +
   draw_plot(c_lit, 0.3, 0.1, 0.2, .2) +
   draw_plot(c_fr, 0.5, 0.1, 0.2, .2) +
   draw_plot(c_li, 0.7, 0.1, 0.2, .2) +
-  annotate('text', label = c('C content (%)','N content (%)','Humidity (%)', 'Bulk density (g.cm  )',  
-                             'Species richness', 'Litter biomass (g.m  )', "Living biomass (g.m  ", 'Living soil cover (%)'),
+  annotate('text', label = c('C content (%)','N content (%)','Water content (%)', 'Bulk density (g.cm  )',  
+                             'Species richness', 'Litter biomass (g.m  )', "Living biomass (g.m  )", 'Living soil cover (%)'),
            x = c(0.1,0.1,0.1,0.1,0.22,0.42,0.62,0.82), y = c(0.22,0.42,0.62,0.82, 0.1,0.1,0.1,0.1),
            angle = c(90,90,90,90, 0,0,0,0), cex = 5)  +
-  draw_plot_label(letters[1:16], x= 0.02+ rep(c(0.1, 0.3, 0.5, 0.7), 4), y= 1.02- rep(c(0.1, 0.3, 0.5, 0.7), each= 4), size = 15)
+  draw_plot_label(tolower(LETTERS)[1:16], x= 0.02+ rep(c(0.1, 0.3, 0.5, 0.7), 4), y= 1.02- rep(c(0.1, 0.3, 0.5, 0.7), each= 4), size = 15)
 pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/tot_plot.pdf', height = 10, width = 10)
 plot(tot_plot)
 dev.off()
 
-"*'Living biomass (g.'*m^{2}*')'*"
-Living biomass (g.m^-2)
 
 
 
@@ -514,3 +517,4 @@ ggplot(Field_com_melt, aes(x = variable, y = value+1)) + geom_boxplot()+theme_bw
 #  geom_jitter(position=position_dodge(0.6)) +
   facet_wrap(~LU, ncol = 2) + scale_y_log10() + xlab('Species') +
   ylab(bquote(Plants~per~m^2))+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
