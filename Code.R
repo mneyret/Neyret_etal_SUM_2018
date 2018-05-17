@@ -1,4 +1,4 @@
-setwd("~/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Code and Data")
+setwd("~/Code and Data")
 library(nlme)
 library(multcomp)
 library(MuMIn)
@@ -74,7 +74,7 @@ summary(glht(mod_cs2, linfct = mcp(LU = "Tukey")))
 #### Interactions between weeds and soil properties ####
 # Pearson correlation coefficients
 rcorr(as.matrix(Plot1m2_data[,2:14]))
-for (i in c( 'Bulk_density','Humidity', 'C', 'N')){
+for (i in c( 'Bulk_density')){#,'Humidity', 'C', 'N')){
   for (j in c('Fresh','Richness', 'Litter', 'Living_cover')){
     print('----------------------------------------------')
     print(i)
@@ -86,21 +86,21 @@ for (i in c( 'Bulk_density','Humidity', 'C', 'N')){
     DATA = data.frame(Y,X,LU, Field)
     
     ## Model A: removes effect of land-use
-    mod0 = lm(Y~LU, data = DATA, na.action = na.omit)
-    res = mod0$residuals
-    modA = lme(res ~ X, data = DATA, random = ~1|Field, na.action = na.omit)
-    print(summary(modA))
-    print(r.squaredGLMM(modA))
+ #   mod0 = lm(Y~LU, data = DATA, na.action = na.omit)
+#    res = mod0$residuals
+#    modA = lme(res ~ X, data = DATA, random = ~1|Field, na.action = na.omit)
+#    print(summary(modA))
+#    print(r.squaredGLMM(modA))
     
     ## Model B: interaction with land-use
-   #  modB1 = lme(Y~LU*X, data = DATA, random = ~1|Field, na.action = na.omit)
-   #  modB2 = lme(Y~LU/X, data = DATA, random = ~1|Field, na.action = na.omit)
+     modB1 = lme(Y~LU*X, data = DATA, random = ~1|Field, na.action = na.omit)
+     modB2 = lme(Y~LU/X, data = DATA, random = ~1|Field, na.action = na.omit)
 
-   # print(summary(modB))
+  #  print(summary(modB1))
 
-   #  print(cld(lsmeans(modB1, ~LU), alpha = 0.1))
-   #   print(cld(lstrends(modB2, specs = 'LU', var = 'X', alpha = 0.05)))
-    #print(r.squaredGLMM(modB1))
+     print(cld(lsmeans(modB1, ~LU), alpha = 0.1))
+      print(cld(lstrends(modB2, specs = 'LU', var = 'X', alpha = 0.05)))
+    print(r.squaredGLMM(modB1))
     
     
     # plot(residuals(modA)~Plot1m2_data$Plot, main = i, xlab = j)
@@ -188,7 +188,7 @@ cbbPalette = c('gray', 'gray','gray', 'gray' )
 names(cbbPalette) = c("ULR", "M", "YRM", 'OR')
 
 ric = lm.BP(Plot1m2_data, 'Richness', 'LU', 'Field', colors = cbbPalette, ymax = 15,expression(bold(paste("Number of species / ", m^{2}))), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/richness_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/richness_crop.pdf", width = 7.5, height = 5)
 ric$BP = ric$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14)) + xlab('Land use')
@@ -196,7 +196,7 @@ plot(ric$BP)
 dev.off()
 
 Lit = lm.BP(Plot1m2_data, 'Litter', 'LU', 'Field', colors = cbbPalette, ymax = 920,expression(bold(paste("Litter biomass (g/", m^{2}, ")"))), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/Lit_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/Lit_crop.pdf", width = 7.5, height = 5)
 
 Lit$BP = Lit$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -205,7 +205,7 @@ plot(Lit$BP)
 dev.off()
 
 Fr= lm.BP(Plot1m2_data, 'Fresh', 'LU', 'Field', colors = cbbPalette, ymax = 300,expression(bold(paste("Living biomass (g/", m^{2}, ")"))), 'TRUE', lambda = 0.3)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/Fr_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/Fr_crop.pdf", width = 7.5, height = 5)
 
 Fr$BP = Fr$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -214,7 +214,7 @@ plot(Fr$BP)
 dev.off()
 
 li= lm.BP(Plot1m2_data[!is.na(Plot1m2_data$Living_cover),], 'Living_cover', 'LU', 'Field', colors = cbbPalette, ymax = 80,expression(bold(paste('Living soil cover (%)'))), 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/li_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/li_crop.pdf", width = 7.5, height = 5)
 li$BP = li$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14))+ xlab('Land use')
@@ -224,7 +224,7 @@ dev.off()
 
 
 hum= lm.BP(Plot1m2_data, 'Humidity', 'LU', 'Field', colors = cbbPalette, ymax = 30,'Soil water content (%)', 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/hum_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/hum_crop.pdf", width = 7.5, height = 5)
 
 hum$BP = hum$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                    labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -233,8 +233,8 @@ plot(hum$BP)
 dev.off()
 
 
-bd= lm.BP(Plot1m2_data, 'Bulk_density', 'LU', 'Field', colors = cbbPalette, ymax = 1.5,expression(bold(paste("Bulk density (g/", cm^{3}, ")"))), 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/bd_crop.pdf", width = 7.5, height = 5)
+bd= lm.BP(Plot1m2_data, 'Bulk_density', 'LU', 'Field', colors = cbbPalette, ymax = 1.6,expression(bold(paste("Bulk density (g/", cm^{3}, ")"))), 'TRUE', lambda = 0.25)
+pdf("~/Figures/bd_crop.pdf", width = 7.5, height = 5)
 
 bd$BP = bd$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                  labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -243,14 +243,14 @@ plot(bd$BP)
 dev.off()
 
 c= lm.BP(Plot1m2_data, 'C', 'LU', 'Field', colors = cbbPalette, ymax = 5,'Carbon content (%)', 'TRUE', lambda = 0.25)
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/c_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/c_crop.pdf", width = 7.5, height = 5)
 c$BP = c$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
   theme(axis.text.x  = element_text(angle=0, vjust=0.5, size=14))+ xlab('Land use')
 plot(c$BP)
 dev.off()
 
-pdf("/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/n_crop.pdf", width = 7.5, height = 5)
+pdf("~/Figures/n_crop.pdf", width = 7.5, height = 5)
 n= lm.BP(Plot1m2_data, 'N', 'LU', 'Field', colors = cbbPalette, ymax = 0.5,'Nitrogen content (%)', 'TRUE', lambda = 0.25)
 n$BP = n$BP + scale_x_discrete(breaks=c("ULR", "M", "YRM", 'OR'),
                                labels=c("Rice", "Maize", "Young RT + Maize", 'Mature RT'))+
@@ -274,7 +274,7 @@ ggbca = ggplot(BCA_data, aes(CS1, CS2, shape = LU, linetype = LU)) +
     plot.background=element_blank()) +
   xlab('CS1 (7.9%)') + ylab('CS2 (7.1%)') 
 
-save_plot('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/BCA_leg2.pdf',ggbca, base_aspect_ratio = 1.85 )
+save_plot('~/Figures/BCA_leg2.pdf',ggbca, base_aspect_ratio = 1.85 )
 
 
 bca_pairtest = cbind(-BCA$ls[,1:3],Plot1m2_community$LU)
@@ -326,7 +326,7 @@ a = ggdraw() +
   draw_plot(plot.cs1 , 0.05, 0.75,  .70, .25) +
   draw_plot(plot.cs2, .75,   0.05,  .25, .70)
 a
-save_plot('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/BCA_plot.pdf',a, base_aspect_ratio = 1.85 )
+save_plot('~/Figures/BCA_plot.pdf',a, base_aspect_ratio = 1.85 )
 
 
 
@@ -340,10 +340,10 @@ circleFun <- function(center = c(0,0),diameter = 1, npoints = 100){
 
 
 
-tot_names = c('Con.sum', 'Lyg.fle', 'The.sub' ,'Pen.pol', 'Pas.con', 
+tot_names = c('Eri.sum', 'Lyg.fle', 'The.sub' ,'Pen.pol', 'Pas.con', 
               'Chr.odo', 'Blu.lac', 'Sel.hel' ,'Cra.cre' ,'Thy.lat',
               'Dig.rad' ,'Eup.hir' ,'Man.uti' ,'Ele.ind', 'Age.con',
-              'Cyn.dac' ,'Spi.pan', 'Mel.rep' ,'Cen.asi' )
+              'Cyn.dac' ,'Acm.pan', 'Mel.rep' ,'Cen.asi' )
 XLAB = (BCA$co[tot_names,]$Comp1)
 YLAB = (BCA$co[tot_names,]$Comp2)    
 l_seg = sqrt(XLAB^2 + YLAB^2) + 0.05
@@ -360,7 +360,7 @@ YLAB_lab =  YLAB_prim  # + c(0,      - 0.05,       0.13,      -0.05,   -0.1,
                           0.15,     -0.03,    0.1,     0.1)
 circle <- circleFun(c(0,0),2,npoints = 100)
 
-      #  ggcircle =
+        ggcircle =
           ggplot(BCA$co[tot_names,], aes(x=Comp1, y=-Comp2)) +
   #annotation_custom(grob=circleGrob(r=unit(1,"npc")), xmin=-1, xmax=1, ymin=-1, ymax=1) +
   geom_segment(data=BCA$co[tot_names,], aes(x=0, y=0, xend=Comp1, yend=-Comp2),
@@ -375,7 +375,7 @@ circle <- circleFun(c(0,0),2,npoints = 100)
   geom_path(data = circle, aes(x=x,y=y), color = 'lightgray') + xlab('CS1 (7.8%)') + ylab('CS2 (6.9%)') +
             xlim(c(-1.5,1)) + ylim(c(-1, 1.5))
 
-pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/circle.pdf', width = 4, height = 4)
+pdf('~/Figures/circle.pdf', width = 4, height = 4)
 plot(ggcircle)
 dev.off()
 
@@ -405,7 +405,7 @@ trend_plot = function(data, Y, X, Crop_to_draw, LP, xtext, ytext, angl){
   return(gg)
 }
 hum_li = trend_plot(Plot1m2_data[!is.na(Plot1m2_data$Living_cover),], 'Humidity', 'Living_cover', c('OR', 'ULR'), c('dashed', 'solid'),  c(40, 64),c(17,10), c(0,22))
-hum_ric = trend_plot(Plot1m2_data, 'Humidity', 'Richness', c('M', 'OR'), c('dashed', 'solid'),  c(9, 6),c(5.8,15.8), c(0,-10))
+hum_ric = trend_plot(Plot1m2_data, 'Humidity', 'Richness', c('M', 'OR'), c('dashed', 'solid'),  c(9, 7),c(5.8,16), c(0,-11))
 hum_lit = trend_plot(Plot1m2_data, 'Humidity', 'Litter', c('OR'), c( 'solid'),  c(500),c(18), c(12))
 hum_fr = trend_plot(Plot1m2_data, 'Humidity', 'Fresh', c('ULR'), c( 'solid'),  c(220),c(10), c(15))
 bd_fr = trend_plot(Plot1m2_data, 'Bulk_density', 'Fresh', NA, NA,  NA,NA,NA)
@@ -445,7 +445,7 @@ tot_plot = ggdraw() +
            x = c(0.1,0.1,0.1,0.1,0.22,0.42,0.62,0.82), y = c(0.22,0.42,0.62,0.82, 0.1,0.1,0.1,0.1),
            angle = c(90,90,90,90, 0,0,0,0), cex = 5)  +
   draw_plot_label(tolower(LETTERS)[1:16], x= 0.02+ rep(c(0.1, 0.3, 0.5, 0.7), 4), y= 1.02- rep(c(0.1, 0.3, 0.5, 0.7), each= 4), size = 15)
-pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/tot_plot.pdf', height = 10, width = 10)
+pdf('~/Figures/tot_plot.pdf', height = 10, width = 10)
 plot(tot_plot)
 dev.off()
 
@@ -500,7 +500,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
-pdf('/Users/Margot/Desktop/Projet_M2/Documents/Papers/Paper1_SUM/Figures/meteo.pdf', width = 9, height = )
+pdf('~/Figures/meteo.pdf', width = 9, height = )
 grid.arrange(rf, rh, rdens, ncol = 1)
 dev.off()
 
