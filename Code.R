@@ -74,7 +74,7 @@ summary(glht(mod_cs2, linfct = mcp(LU = "Tukey")))
 #### Interactions between weeds and soil properties ####
 # Pearson correlation coefficients
 rcorr(as.matrix(Plot1m2_data[,2:14]))
-for (i in c( 'Bulk_density')){#,'Humidity', 'C', 'N')){
+for (i in c( 'Bulk_density','Humidity', 'C', 'N')){
   for (j in c('Fresh','Richness', 'Litter', 'Living_cover')){
     print('----------------------------------------------')
     print(i)
