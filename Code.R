@@ -1,4 +1,3 @@
-setwd("~/Code and Data")
 library(nlme)
 library(multcomp)
 library(MuMIn)
